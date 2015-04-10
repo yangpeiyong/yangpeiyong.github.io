@@ -4,4 +4,5 @@ title: A Litter More
 tagline: Step By Step
 ---
 {% include JB/setup %}
-{% include themes/the-program/post.html %}
+{% assign posts_collate = site.posts %}
+{% include JB/posts_collate %}
