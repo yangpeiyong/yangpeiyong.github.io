@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Hello World!
-tagline: Supporting tagline
+title: A Litter More
+tagline: Step By Step
 ---
 {% include JB/setup %}
+{% include themes/the-program/post.html %}
