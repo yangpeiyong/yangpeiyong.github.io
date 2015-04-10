@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: page
 title: A Litter More
 keywords: Java blog,Jekyll
 ---
