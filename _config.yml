@@ -2,7 +2,7 @@
 title:       STEP BY STEP
 email:       yctx.yang@gmail.com
 author:      Yang Peiyong
-description: "On Road"
+description: ""
 baseurl:     ""
 url:         "http://yangpeiyong.com"
 
@@ -31,7 +31,7 @@ paypal_url:
 flattr_button:
 
 # Build settings
-markdown:     Android
+markdown:     kramdown
 permalink:    pretty
 paginate:     3
 sass:
