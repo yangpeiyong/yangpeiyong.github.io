@@ -1,78 +1,86 @@
-# Jekyll-Bootstrap
+# Pixyll 中文版
+## 中文版说明
+这是pixyll的汉化版，主要改动如下:
 
-The quickest way to start and publish your Jekyll powered blog. 100% compatible with GitHub pages
+1. 语言汉化
+2. 加入**多说**评论功能
+3. 加入**百度统计**(可用google统计和百度统计)
+4. fonts.googleapis.com更改为360字体cdn，大幅增加国内访问速度
 
-## Usage
+原版:[pixyll.com](http://www.pixyll.com)
 
-For all usage and documentation please see: <http://jekyllbootstrap.com>
+![Pixyll screenshot](https://cloud.githubusercontent.com/assets/1424573/3847467/134aa236-1e66-11e4-8421-4e8c122118dc.png)
 
-## Version
+## 使用说明 
 
-0.3.0 - stable and versioned using [semantic versioning](http://semver.org/).
+要使用Pixyll，你需要先安装ruby和jekyll
 
-**NOTE:** 0.3.0 introduces a new theme which is not backwards compatible in the sense it won't _look_ like the old version.
-However, the actual API has not changed at all.
-You might want to run 0.3.0 in a branch to make sure you are ok with the theme design changes.
+### 安装 Jekyll
 
-## Milestones
+你可以使用gem安装Jekyll，若已安装Jeykll，请跳过此步
 
-[0.4.0](https://github.com/plusjade/jekyll-bootstrap/milestones/v%200.4.0) - next release [ETA 03/29/2015]
+```
+$ gem install jekyll
+```
 
-### GOALS
+#### 确认 Jekyll 版本
 
-* No open PRs against master branch.
-* Squash some bugs.
-* Add some new features (low-hanging fruit).
-* Establish social media presence.
+确认你的Jekyll版本，因为Pixyll只支持 [Jekyll 2.0 以上版本](http://jekyllrb.com/news/2014/05/06/jekyll-turns-2-0-0/).
 
+```
+$ jekyll -v
+# This should be jekyll 2.0.0 or later
+```
 
-### Bugs
+### 下载源码
 
-|Bug |Description
-|------|---------------
-|[#86](https://github.com/plusjade/jekyll-bootstrap/issues/86)  |&#x2611; Facebook Comments
-|[#113](https://github.com/plusjade/jekyll-bootstrap/issues/113)|&#x2611; ASSET_PATH w/ page & post
-|[#144](https://github.com/plusjade/jekyll-bootstrap/issues/144)|&#x2610; BASE_PATH w/ FQDN
-|[#227](https://github.com/plusjade/jekyll-bootstrap/issues/227)|&#x2611; Redundant JB/setup
+fork 和 clone本repo
 
-### Features
+### 修改配置文件: _config.yml
 
-|Bug |Description
-|------|---------------
-|[#98](https://github.com/plusjade/jekyll-bootstrap/issues/98)  |&#x2611; GIST Integration
-|[#244](https://github.com/plusjade/jekyll-bootstrap/issues/244)|&#x2611; JB/file_exists Helper
-|[#42](https://github.com/plusjade/jekyll-bootstrap/issues/42)  |&#x2611; Sort collections of Pages / Posts
-|[#84](https://github.com/plusjade/jekyll-bootstrap/issues/84)  |&#x2610; Detecting production mode
+编辑配置文件 `_config.yml` :
 
-### TODOS
+```yml
+# Site settings
+title: 网站标题
+email: 您的邮箱 
+author: John Otander
+description: "A simple, beautiful theme for Jekyll that emphasizes content rather than aesthetic fluff."
+baseurl: ""
+url: "网站url，如:http://pixyll.com"
 
-Review existing pull requests against plusjake/jekyll-bootstrap:master. Merge or close each.
+# Build settings
+markdown: kramdown
+permalink: pretty
+#每页文章数量
+paginate: 3
+```
 
-* Create twitter account. Add link / icon on jekyllbootstrap.com.
-* Create blog posts under plusjade/gh-pages, expose on jekyllbootstrap.com, feed to twitter account.
-* Announce state of project, announce roadmap(s), announce new versions as they’re released.
+### 多说评论和百度统计(可选)
+配置多说，和百度统计，如果不需要评论和统计功能，你可以跳过此步
+你需要先注册多说和百度统计账号，然后将相应id填入配置文件即可
+特别注意，百度统计请使用异步js代码
+![百度统计](https://raw.githubusercontent.com/ee0703/pixyll-zh-cn/master/images/bdtjcfg.jpg)
 
-## Contributing
+``` yml
+#Duoshuo short Name / 多说的shortname
+duoshuo: 在这里填入你的多说short name
 
-
-To contribute to the framework please make sure to checkout your branch based on `jb-development`!!
-This is very important as it allows me to accept your pull request without having to publish a public version release.
-
-Small, atomic Features, bugs, etc.
-Use the `jb-development` branch but note it will likely change fast as pull requests are accepted.
-Please rebase as often as possible when working.
-Work on small, atomic features/bugs to avoid upstream commits affecting/breaking your development work.
-
-For Big Features or major API extensions/edits:
-This is the one case where I'll accept pull-requests based off the master branch.
-This allows you to work in isolation but it means I'll have to manually merge your work into the next public release.
-Translation : it might take a bit longer so please be patient! (but sincerely thank you).
-
-**Jekyll-Bootstrap Documentation Website.**
-
-The documentation website at <http://jekyllbootstrap.com> is maintained at https://github.com/plusjade/jekyllbootstrap.com
+#Baidu analytics / 百度统计(异步的js码，注意使用异步版本的)
+baidu_analyze: 百度统计码，如：3908cbb144cf558ba6a823230d653fc22 
+```
 
 
-## License
+### 运行服务器 Jekyll Serve
 
-[MIT](http://opensource.org/licenses/MIT)
+运行Jekyll服务器
+```
+$ jekyll serve --watch
+```
+
+用浏览器打开 `localhost:4000`就可以看到网站了.
+
+### 使用 Github Pages
+
+关于如何使用Github pages来host你的网站,可以参考[这里](https://pages.github.com/)
+
