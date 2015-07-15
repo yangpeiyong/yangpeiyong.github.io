@@ -2,6 +2,7 @@
 layout:     post
 title:      Android 动态加载运行jar/dex
 date:       2014-02-12 11:21:29
+summary:    DexClassLoader 可以从jar或者apk文件中加载类，执行相关代码。
 categories: Android DexClassLoader
 ---
 

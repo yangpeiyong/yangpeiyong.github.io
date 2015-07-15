@@ -7,7 +7,7 @@ baseurl:     ""
 url:         "http://yangpeiyong.com"
 
 #Duoshuo short Name / 多说的shortname
-duoshuo:
+duoshuo: yangpeiyong
 
 #Baidu analytics / 百度统计(异步的js码，注意使用异步版本的)
 baidu_analyze: 9d6ff3b5df42dce596d88dcc7408bb6f
