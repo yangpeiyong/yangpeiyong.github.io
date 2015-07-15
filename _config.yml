@@ -2,7 +2,7 @@
 title:       STEP BY STEP
 email:       yctx.yang@gmail.com
 author:      Yang Peiyong
-description: ""
+description: "On Road"
 baseurl:     ""
 url:         "http://yangpeiyong.com"
 
@@ -10,7 +10,7 @@ url:         "http://yangpeiyong.com"
 duoshuo:
 
 #Baidu analytics / 百度统计(异步的js码，注意使用异步版本的)
-baidu_analyze: 3908cbb144cf558ba6a823230d653fc22
+baidu_analyze: 9d6ff3b5df42dce596d88dcc7408bb6f
 
 # Google analytics
 google_analytics:
@@ -31,7 +31,7 @@ paypal_url:
 flattr_button:
 
 # Build settings
-markdown:     kramdown
+markdown:     Android
 permalink:    pretty
 paginate:     3
 sass:
