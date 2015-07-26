@@ -48,7 +48,7 @@ findViewById(R.id.main).getViewTreeObserver(). addOnGlobalLayoutListener(new Vie
                 boolean visible = heightDifference > 100;  
             }  
         });  
-{%endhighlight}
+{% endhighlight %}
 这种方式在所有的情况下都可以使用。
 
 [Demo 下载](http://pan.baidu.com/s/1kT7H8ZP)
