@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Android 动态加载运行jar/dex &#8211; STEP BY STEP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="DexClassLoader 可以从jar或者apk文件中加载类，执行相关代码。">
+    <meta name="author" content="Yang Peiyong">
+    <meta name="keywords" content="Android, DexClassLoader">
+    <link rel="canonical" href="http://helloa.cn/android/dexclassloader/2014/02/12/android-dynamic-run-jar-dex/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.useso.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.useso.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android 动态加载运行jar/dex">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://helloa.cn/android/dexclassloader/2014/02/12/android-dynamic-run-jar-dex/">
+    <meta property="og:site_name" content="STEP BY STEP">
+    
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?9d6ff3b5df42dce596d88dcc7408bb6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://helloa.cn" class="site-title">STEP BY STEP</a>
+      <nav class="site-nav right">
+        <a href="/about/">关于</a>
+<a href="/contact/">联系</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  
+  <h2 class="py2">Android 动态加载运行jar/dex</h2>
+  
+  <span class="post-meta">02月 12日, 2014</span><br>
+  
+  <span class="post-meta small">1 minute read</span>
+</div>
+
+<article class="post-content">
+  <p>DexClassLoader 可以从jar或者apk文件中加载类，执行相关代码。</p>
+
+<p>DexClassLoader 需要一个私有目录来缓存优化后的classes，注意不要将这个目录放在SD卡上。</p>
+
+<p>File optimizedDexOutputDir = context.getDir(“dex”, 0);
+使用DexClassLoader来加载类：</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre><span class="n">DexClassLoader</span> <span class="n">cl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DexClassLoader</span><span class="o">(</span><span class="n">dexStoragePath</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="n">optimizedDexOutputDir</span><span class="o">.</span><span class="na">getAbsolutePath</span><span class="o">(),</span>
+                        <span class="kc">null</span><span class="o">,</span>
+                        <span class="n">getClassLoader</span><span class="o">());</span>
+
+<span class="n">Class</span> <span class="n">libProviderClazz</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+<span class="n">libProviderClazz</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="na">loadClass</span><span class="o">(</span> <span class="err">“</span><span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">dex</span><span class="o">.</span><span class="na">lib</span><span class="o">.</span><span class="na">LibraryProvider</span><span class="err">”</span> <span class="o">);</span>
+<span class="n">LibraryInterface</span> <span class="n">lib</span> <span class="o">=</span> <span class="o">(</span><span class="n">LibraryInterface</span><span class="o">)</span> <span class="n">libProviderClazz</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+<span class="n">lib</span><span class="o">.</span><span class="na">showAwesomeToast</span><span class="o">(</span><span class="n">view</span><span class="o">.</span><span class="na">getContext</span><span class="o">(),</span> <span class="err">“</span><span class="n">hello</span><span class="err">”</span><span class="o">);</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>这里使用了接口对loadClass进行了类型转化，当然也可以使用反射，不过反射是复杂和低效的。</p>
+
+<p>总结一下，加载jar/apk中类的步骤如下：</p>
+
+<p>1、获取jar/apk文件</p>
+
+<p>2、通过DexClassLoader类加载器来解析优化jar/apk文件</p>
+
+<p>3、通过loadClass函数来载入类</p>
+
+<p>4、通过newInstance来生成类的对象，并使用</p>
+
+<p>在下面的这两篇篇博客中详细介绍了DexClassLoader的使用。</p>
+
+<p>http://yunfeng.sinaapp.com/?p=87</p>
+
+<p>http://android-developers.blogspot.com/2011/07/custom-class-loading-in-dalvik.html</p>
+
+<p>http://yunfeng.sinaapp.com/?p=87这篇文章中提到需要将jar/apk拷贝到私有目录再加载，经过测试，这是不需要的，jar/apk在SD卡中也可以。</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Custom Class Loading in Dalvik</td>
+      <td>Android Developers Blog</td>
+    </tr>
+  </tbody>
+</table>
+
+</article>
+
+
+
+
+
+		
+	
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Android 动态加载运行jar/dex" data-title="Android 动态加载运行jar/dex" data-url="http://helloa.cn/android/dexclassloader/2014/02/12/android-dynamic-run-jar-dex/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"yangpeiyong"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+
+      	
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+	<a href="https://github.com/yangpeiyong">Github</a> <br>
+
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

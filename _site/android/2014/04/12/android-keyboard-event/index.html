@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>在Android中监听键盘出现和隐藏事件 &#8211; STEP BY STEP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Android 没有键盘消失和出现的监听接口，那么我需要监听键盘事件的时候，该如何做呢？">
+    <meta name="author" content="Yang Peiyong">
+    <meta name="keywords" content="Android">
+    <link rel="canonical" href="http://helloa.cn/android/2014/04/12/android-keyboard-event/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css" type="text/css">
+
+    <!-- Fonts -->
+    <link href='//fonts.useso.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.useso.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="在Android中监听键盘出现和隐藏事件">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://helloa.cn/android/2014/04/12/android-keyboard-event/">
+    <meta property="og:site_name" content="STEP BY STEP">
+    
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?9d6ff3b5df42dce596d88dcc7408bb6f";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://helloa.cn" class="site-title">STEP BY STEP</a>
+      <nav class="site-nav right">
+        <a href="/about/">关于</a>
+<a href="/contact/">联系</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  
+  <h2 class="py2">在Android中监听键盘出现和隐藏事件</h2>
+  
+  <span class="post-meta">04月 12日, 2014</span><br>
+  
+  <span class="post-meta small">1 minute read</span>
+</div>
+
+<article class="post-content">
+  <p>##一、缘起</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Android 没有键盘消失和出现的监听接口
+
+ 有的时候需要根据键盘消失和出现来更改UI布局
+</code></pre></div></div>
+
+<p>##二、实现方案</p>
+
+<p>1、自定义layout</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="code"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">YPYRelativeLayout</span> <span class="kd">extends</span> <span class="n">RelativeLayout</span> <span class="o">{</span>  
+        <span class="nd">@Override</span>
+        <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onLayout</span><span class="o">(</span><span class="kt">boolean</span> <span class="n">changed</span><span class="o">,</span> <span class="kt">int</span> <span class="n">l</span><span class="o">,</span> <span class="kt">int</span> <span class="n">t</span><span class="o">,</span> <span class="kt">int</span> <span class="n">r</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span>  
+               <span class="kd">super</span><span class="o">.</span><span class="na">onLayout</span><span class="o">(</span><span class="n">changed</span><span class="o">,</span> <span class="n">l</span><span class="o">,</span> <span class="n">t</span><span class="o">,</span> <span class="n">r</span><span class="o">,</span> <span class="n">b</span><span class="o">);</span>  
+             <span class="c1">//在这里通过检测layout高度(b-t)的变化来判断键盘是否出现</span>
+       <span class="o">}</span>  
+<span class="o">}</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<p>这种方案需要在manifest文件中加入：</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>android:windowSoftInputMode = “adjustResize</td>
+      <td>stateHidden”</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这样layout才会随键盘的出现和消失来调整大小</p>
+
+<p>存在问题：由于Android系统的BUG，在全屏模式下，这种方式无法使用</p>
+
+<p>2、监听addOnGlobalLayoutListener</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">main</span><span class="o">).</span><span class="na">getViewTreeObserver</span><span class="o">().</span> <span class="n">addOnGlobalLayoutListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ViewTreeObserver</span><span class="o">.</span><span class="na">OnGlobalLayoutListener</span><span class="o">()</span> <span class="o">{</span>  
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onGlobalLayout</span><span class="o">()</span> <span class="o">{</span>  
+                <span class="c1">// TODO Auto-generated method stub  </span>
+                <span class="n">Rect</span> <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Rect</span><span class="o">();</span>  
+                <span class="n">mRelativeLayout</span><span class="o">.</span><span class="na">getWindowVisibleDisplayFrame</span><span class="o">(</span><span class="n">r</span><span class="o">);</span>  
+                <span class="kt">int</span> <span class="n">screenHeight</span> <span class="o">=</span> <span class="n">mRelativeLayout</span> <span class="o">.</span><span class="na">getRootView</span><span class="o">().</span><span class="na">getHeight</span><span class="o">();</span>  
+                <span class="kt">int</span> <span class="n">heightDifference</span> <span class="o">=</span> <span class="n">screenHeight</span> <span class="err">–</span> <span class="o">(</span><span class="n">r</span><span class="o">.</span><span class="na">bottom</span> <span class="err">–</span> <span class="n">r</span><span class="o">.</span> <span class="n">top</span><span class="o">);</span>  
+                <span class="kt">boolean</span> <span class="n">visible</span> <span class="o">=</span> <span class="n">heightDifference</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="o">;</span>  
+            <span class="o">}</span>  
+        <span class="o">});</span>  </code></pre></figure>
+
+<p>这种方式在所有的情况下都可以使用。</p>
+
+<p><a href="http://pan.baidu.com/s/1kT7H8ZP">Demo 下载</a></p>
+
+</article>
+
+
+
+
+
+		
+	
+<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="在Android中监听键盘出现和隐藏事件" data-title="在Android中监听键盘出现和隐藏事件" data-url="http://helloa.cn/android/2014/04/12/android-keyboard-event/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"yangpeiyong"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+
+      	
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+	<a href="https://github.com/yangpeiyong">Github</a> <br>
+
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>
