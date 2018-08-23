@@ -7,13 +7,13 @@ baseurl:     ""
 url:         "http://helloa.cn"
 
 #Duoshuo short Name / 多说的shortname
-duoshuo: yangpeiyong
+# duoshuo: yangpeiyong
 
 #Baidu analytics / 百度统计(异步的js码，注意使用异步版本的)
-baidu_analyze: 9d6ff3b5df42dce596d88dcc7408bb6f
+# baidu_analyze: 9d6ff3b5df42dce596d88dcc7408bb6f
 
 # Google analytics
-google_analytics:
+# google_analytics:
 
 # Optional features
 animated:           false
