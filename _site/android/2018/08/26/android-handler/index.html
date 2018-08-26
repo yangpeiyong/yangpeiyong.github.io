@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Android 消息机制详解 &#8211; STEP BY STEP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="深度介绍Android的消息机制和多线程开发">
+    <meta name="author" content="Yang Peiyong">
+    <meta name="keywords" content="Android">
+    <link rel="canonical" href="http://helloa.cn/android/2018/08/26/android-handler/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pixyll.css" type="text/css">
+
+    <!-- Fonts -->
+    <!--
+    <link href='//fonts.useso.com/css?family=Merriweather:900,900italic,300,300italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.useso.com/css?family=Lato:900,300' rel='stylesheet' type='text/css'>
+    
+  -->
+
+    <!-- Open Graph -->
+    <!-- From: https://github.com/mmistakes/hpstr-jekyll-theme/blob/master/_includes/head.html -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Android 消息机制详解">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://helloa.cn/android/2018/08/26/android-handler/">
+    <meta property="og:site_name" content="STEP BY STEP">
+    <!-- 
+ -->
+</head>
+
+<body class="">
+  <div class="site-wrap">
+    <header class="site-header px2 px-responsive">
+  <div class="mt2 wrap">
+    <div class="measure">
+      <a href="http://helloa.cn" class="site-title">STEP BY STEP</a>
+      <nav class="site-nav right">
+        <a href="/about/">关于</a>
+<a href="/contact/">联系</a>
+
+      </nav>
+      <div class="clearfix"></div>
+      
+    </div>
+  </div>
+</header>
+
+
+    <div class="post p2 p-responsive wrap" role="main">
+      <div class="measure">
+        
+
+
+<div class="post-header mb2">
+  
+  <h2 class="py2">Android 消息机制详解</h2>
+  
+  <span class="post-meta">08月 26日, 2018</span><br>
+  
+  <span class="post-meta small">1 minute read</span>
+</div>
+
+<article class="post-content">
+  <h1 id="1-handler-是什么">1. Handler 是什么？</h1>
+
+<p>Handler 是 Android 平台的异步消息分发的框架</p>
+
+<h1 id="2-handler-能做什么">2. Handler 能做什么？</h1>
+
+<p>可以从一个Thread向另一个Thread发送消息。</p>
+
+<h1 id="3-handler-核心机制">3. Handler 核心机制</h1>
+
+<p>整个handler机制的核心是如下三个类：<code class="highlighter-rouge">Handler</code> <code class="highlighter-rouge">Looper</code> <code class="highlighter-rouge">MessageQueue</code></p>
+
+<p>Looper 和 MessageQueue 是 Hander 的成员变量</p>
+
+<p>其中 Handler 中的 MessageQueue 来源于 Looper， Looper 通过 ThreadLocal 确保每个线程有一份自己的对象。</p>
+
+<p>因而，无论有多少个handler，对于一个线程来说 Looper 和 MessageQueue只有一个。</p>
+
+<p>Handler消息机制的简单流程如下：</p>
+
+<p>Handler –&gt; MessageQueue –&gt; Looper –&gt; Message –&gt; handler</p>
+
+<p>Handler 将消息存储到MessageQueue，Looper从MessageQueue中取出Message，交由对应的handler处理</p>
+
+<p>MessageQueue是一个单向链表结构，插入需要查找响应的位置。</p>
+
+</article>
+
+
+
+
+
+		
+	
+
+      	
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+  <div class="p2 wrap">
+    <div class="measure mt1 center">
+      <small>
+	<a href="https://github.com/yangpeiyong">Github</a> <br>
+  <p>京ICP备16050753号</p>
+      </small>
+    </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

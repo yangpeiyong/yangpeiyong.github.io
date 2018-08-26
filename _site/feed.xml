@@ -8,25 +8,35 @@
     
       <item>
         <title>Android 消息机制详解</title>
-        <description>&lt;p&gt;Handler&lt;/p&gt;
+        <description>&lt;h1 id=&quot;1-handler-是什么&quot;&gt;1. Handler 是什么？&lt;/h1&gt;
 
-&lt;p&gt;MessageQueue&lt;/p&gt;
+&lt;p&gt;Handler 是 Android 平台的异步消息分发的框架&lt;/p&gt;
 
-&lt;p&gt;DRAWING_CACHE_QUALITY_LOW&lt;/p&gt;
+&lt;h1 id=&quot;2-handler-能做什么&quot;&gt;2. Handler 能做什么？&lt;/h1&gt;
+
+&lt;p&gt;可以从一个Thread向另一个Thread发送消息。&lt;/p&gt;
+
+&lt;h1 id=&quot;3-handler-核心机制&quot;&gt;3. Handler 核心机制&lt;/h1&gt;
+
+&lt;p&gt;整个handler机制的核心是如下三个类：&lt;code class=&quot;highlighter-rouge&quot;&gt;Handler&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Looper&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;MessageQueue&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Looper 和 MessageQueue 是 Hander 的成员变量&lt;/p&gt;
+
+&lt;p&gt;其中 Handler 中的 MessageQueue 来源于 Looper， Looper 通过 ThreadLocal 确保每个线程有一份自己的对象。&lt;/p&gt;
+
+&lt;p&gt;因而，无论有多少个handler，对于一个线程来说 Looper 和 MessageQueue只有一个。&lt;/p&gt;
+
+&lt;p&gt;Handler消息机制的简单流程如下：&lt;/p&gt;
+
+&lt;p&gt;Handler –&amp;gt; MessageQueue –&amp;gt; Looper –&amp;gt; Message –&amp;gt; handler&lt;/p&gt;
+
+&lt;p&gt;Handler 将消息存储到MessageQueue，Looper从MessageQueue中取出Message，交由对应的handler处理&lt;/p&gt;
+
+&lt;p&gt;MessageQueue是一个单向链表结构，插入需要查找响应的位置。&lt;/p&gt;
 </description>
-        <pubDate>Wed, 22 Aug 2018 12:32:18 +0800</pubDate>
-        <link>http://helloa.cn/android/2018/08/22/android-handler/</link>
-        <guid isPermaLink="true">http://helloa.cn/android/2018/08/22/android-handler/</guid>
-      </item>
-    
-      <item>
-        <title>Retrofit</title>
-        <description>&lt;h1 id=&quot;retrofit-源码分析&quot;&gt;Retrofit 源码分析&lt;/h1&gt;
-
-</description>
-        <pubDate>Tue, 05 May 2015 00:00:00 +0800</pubDate>
-        <link>http://helloa.cn/2015/05/05/retrofit/</link>
-        <guid isPermaLink="true">http://helloa.cn/2015/05/05/retrofit/</guid>
+        <pubDate>Sun, 26 Aug 2018 12:32:18 +0800</pubDate>
+        <link>http://helloa.cn/android/2018/08/26/android-handler/</link>
+        <guid isPermaLink="true">http://helloa.cn/android/2018/08/26/android-handler/</guid>
       </item>
     
       <item>
