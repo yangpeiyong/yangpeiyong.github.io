@@ -61,21 +61,168 @@
   
   <span class="post-meta">08月 26日, 2018</span><br>
   
-  <span class="post-meta small">1 minute read</span>
+  <span class="post-meta small">4 minute read</span>
 </div>
 
 <article class="post-content">
-  <h1 id="1-handler-是什么">1. Handler 是什么？</h1>
+  <h4 id="1-handler-是什么">1. Handler 是什么？</h4>
 
-<p>Handler 是 Android 平台的异步消息分发的框架</p>
+<p>Handler是Android系统设计的消息框架，主要用来做两件事：</p>
 
-<h1 id="2-handler-能做什么">2. Handler 能做什么？</h1>
+<ul>
+  <li>在未来某个时刻执行某件事</li>
+  <li>将某件事交由另一个线程执行</li>
+</ul>
 
-<p>可以从一个Thread向另一个Thread发送消息。</p>
+<blockquote>
+  <p>There are two main uses for a Handler:</p>
+  <ol>
+    <li>to schedule messages and runnables to be executed as some point in the future;</li>
+    <li>to enqueue an action to be performed on a different thread than your own.</li>
+  </ol>
+</blockquote>
 
-<h1 id="3-handler-核心机制">3. Handler 核心机制</h1>
+<p>为了完成这两件事，Handler消息机制需要三个问题：1）消息如何发送？2）消息如何存储？ 3）消息是如何被处理？</p>
+
+<p>Handler消息框架通过三个核心类：<code class="highlighter-rouge">Handler</code> <code class="highlighter-rouge">Looper</code> <code class="highlighter-rouge">MessageQueue</code> 来完成整个核心框架的功能。</p>
+
+<h4 id="2-handler-核心机制">2. Handler 核心机制</h4>
 
 <p>整个handler机制的核心是如下三个类：<code class="highlighter-rouge">Handler</code> <code class="highlighter-rouge">Looper</code> <code class="highlighter-rouge">MessageQueue</code></p>
+
+<p>简单来说Handler消息机制的流程如下：</p>
+
+<blockquote>
+  <ol>
+    <li>Handler 将消息存储到 MessageQueue</li>
+    <li>Looper 循环从 MessageQueue 中取出消息交由handler处理</li>
+  </ol>
+</blockquote>
+
+<p>下面我们根据源码分析一下 <code class="highlighter-rouge">Looper</code> <code class="highlighter-rouge">MessageQueue</code>的原理。注意这里的源码是部分代码，只抽取出核心逻辑的相关代码。</p>
+
+<h4 id="3-handler-消息发送">3. Handler 消息发送</h4>
+
+<p>Handler消息发送有如下方法：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">post</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">r</span><span class="o">)</span>
+<span class="n">postDelayed</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">r</span><span class="o">,</span> <span class="kt">long</span> <span class="n">delayMillis</span><span class="o">)</span>
+<span class="n">postAtTime</span><span class="o">(</span><span class="n">Runnable</span> <span class="n">r</span><span class="o">,</span> <span class="kt">long</span> <span class="n">uptimeMillis</span><span class="o">)</span>
+
+<span class="n">sendMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span>
+<span class="n">sendMessageDelayed</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">,</span> <span class="kt">long</span> <span class="n">delayMillis</span><span class="o">)</span>
+<span class="n">sendMessageAtTime</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">,</span> <span class="kt">long</span> <span class="n">uptimeMillis</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>最终都会构造一个message，通过<code class="highlighter-rouge">Hanlder.enqueueMessage(MessageQueue queue, Message msg, long uptimeMillis)</code>存储到<code class="highlighter-rouge">MessageQueue</code>中。</p>
+
+<h4 id="4-looper-运行原理">4. Looper 运行原理</h4>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">loop</span><span class="o">()</span> <span class="o">{</span>
+
+    <span class="kd">final</span> <span class="n">Looper</span> <span class="n">me</span> <span class="o">=</span> <span class="n">myLooper</span><span class="o">();</span>
+
+    <span class="kd">final</span> <span class="n">MessageQueue</span> <span class="n">queue</span> <span class="o">=</span> <span class="n">me</span><span class="o">.</span><span class="na">mQueue</span><span class="o">;</span>
+
+    <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
+        <span class="n">Message</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="na">next</span><span class="o">();</span> <span class="c1">// might block</span>
+        <span class="n">msg</span><span class="o">.</span><span class="na">target</span><span class="o">.</span><span class="na">dispatchMessage</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+<p>当Looper执行loop后，就会进入一个无限循环，不停从<code class="highlighter-rouge">MessageQueue</code>中取出<code class="highlighter-rouge">Message</code>交由对应的target(Handler)处理，事件处理运行在looper所在的线程中。</p>
+
+<h4 id="5-messagequeue-运行原理">5. MessageQueue 运行原理</h4>
+
+<p>MessageQueue的核心方法有两个: <code class="highlighter-rouge">enqueueMessage()</code>和<code class="highlighter-rouge">next()</code>, enqueueMessage是向队列插入数据，next是从队列取出数据。</p>
+
+<p>注意MessageQueue实际存储的数据格式不是队列，而是单向链表</p>
+
+<p>我们先看看enqueueMessage的核心代码</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">boolean</span> <span class="nf">enqueueMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">,</span> <span class="kt">long</span> <span class="n">when</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">msg</span><span class="o">.</span><span class="na">when</span> <span class="o">=</span> <span class="n">when</span><span class="o">;</span>
+        <span class="n">Message</span> <span class="n">p</span> <span class="o">=</span> <span class="n">mMessages</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">p</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">when</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">when</span> <span class="o">&lt;</span> <span class="n">p</span><span class="o">.</span><span class="na">when</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">msg</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">p</span><span class="o">;</span>
+            <span class="n">mMessages</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">Message</span> <span class="n">prev</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="n">p</span><span class="o">;</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">next</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">p</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">when</span> <span class="o">&lt;</span> <span class="n">p</span><span class="o">.</span><span class="na">when</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="n">msg</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">p</span><span class="o">;</span>
+            <span class="n">prev</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>这段代码就是将Message插入到链表里面，插入位置根据when从小到大的顺序判断。when指的是message的执行时间，越小越靠前。</p>
+
+<p>再看看next的核心代码</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">Message</span> <span class="nf">next</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">pendingIdleHandlerCount</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span> <span class="c1">// -1 only during first iteration</span>
+        <span class="kt">int</span> <span class="n">nextPollTimeoutMillis</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
+            <span class="n">nativePollOnce</span><span class="o">(</span><span class="n">ptr</span><span class="o">,</span> <span class="n">nextPollTimeoutMillis</span><span class="o">);</span><span class="c1">//important</span>
+
+            <span class="kd">synchronized</span> <span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">// Try to retrieve the next message.  Return if found.</span>
+                <span class="kd">final</span> <span class="kt">long</span> <span class="n">now</span> <span class="o">=</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">uptimeMillis</span><span class="o">();</span>
+                <span class="n">Message</span> <span class="n">prevMsg</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                <span class="n">Message</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">mMessages</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="o">.</span><span class="na">target</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c1">// Stalled by a barrier.  Find the next asynchronous message in the queue.</span>
+                    <span class="k">do</span> <span class="o">{</span>
+                        <span class="n">prevMsg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="na">next</span><span class="o">;</span>
+                    <span class="o">}</span> <span class="k">while</span> <span class="o">(</span><span class="n">msg</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">msg</span><span class="o">.</span><span class="na">isAsynchronous</span><span class="o">());</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">now</span> <span class="o">&lt;</span> <span class="n">msg</span><span class="o">.</span><span class="na">when</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="c1">// Next message is not ready.  Set a timeout to wake up when it is ready.</span>
+                        <span class="n">nextPollTimeoutMillis</span> <span class="o">=</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">when</span> <span class="o">-</span> <span class="n">now</span><span class="o">,</span> <span class="n">Integer</span><span class="o">.</span><span class="na">MAX_VALUE</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="c1">// Got a message.</span>
+                        <span class="n">mBlocked</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="n">prevMsg</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="n">prevMsg</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="na">next</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="n">mMessages</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="na">next</span><span class="o">;</span>
+                        <span class="o">}</span>
+                        <span class="n">msg</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+                        <span class="k">return</span> <span class="n">msg</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="c1">// No more messages.</span>
+                    <span class="n">nextPollTimeoutMillis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+                <span class="o">}</span>
+
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>next的大体逻辑就是将MessageQueue链表中取出第一个元素，然后将链表头设置为下一个元素。这里调用了native方法<code class="highlighter-rouge">nativePollOnce</code>, 这是利用Linux的epoll机制来实现MessageQueue为空时，线程阻塞，等待新的message加入MessageQueue。</p>
+
+<h4 id="6-主线程消息循环模型">6. 主线程消息循环模型</h4>
+
+<p>waiting to write</p>
+
+<h4 id="7-一些需要注意的问题">7. 一些需要注意的问题</h4>
+
+<p>waiting to write</p>
+
+<h2 id="draft">Draft</h2>
 
 <p>Looper 和 MessageQueue 是 Hander 的成员变量</p>
 
@@ -83,13 +230,7 @@
 
 <p>因而，无论有多少个handler，对于一个线程来说 Looper 和 MessageQueue只有一个。</p>
 
-<p>Handler消息机制的简单流程如下：</p>
-
-<p>Handler –&gt; MessageQueue –&gt; Looper –&gt; Message –&gt; handler</p>
-
-<p>Handler 将消息存储到MessageQueue，Looper从MessageQueue中取出Message，交由对应的handler处理</p>
-
-<p>MessageQueue是一个单向链表结构，插入需要查找响应的位置。</p>
+<p>This article is being written, if you have any questions or suggestions, pelease contact me with wechat(raccoon-yang) or email(yctx.yang@gmail.com)</p>
 
 </article>
 
